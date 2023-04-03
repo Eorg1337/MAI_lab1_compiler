@@ -1,40 +1,133 @@
-var currentPosition = {x: 0, y: 0};
-var lastPosition = {};
-function moveRobot() {
-    var commands = document.getElementById('commands').value;
-    var robot = document.getElementById('robot'); 
-    var commandsArray = commands.split(',');
-    console.log(lastPosition)
-    console.log(currentPosition)
-    for (var i = 0; i < commandsArray.length; i++) {
-    var command = commandsArray[i];
-    
-    if (command === 'f') {
-    currentPosition.y++;
+const robot = {
+    x: 0,
+    y: 0,
+    direction: 'right'
+    };
+    function moveRobot(command) {
+    switch(command) {
+    case 'f':
+    switch(robot.direction) {
+    case 'right':
+    robot.x += 1;
+    break;
+    case 'left':
+    robot.x -= 1;
+    break;
+    case 'up':
+    robot.y -= 1;
+    break;
+    case 'down':
+    robot.y += 1;
+    break;
     }
-    else if (command === 'r') {
-    currentPosition.x++;    
+    break;
+    case 'r':
+    switch(robot.direction) {
+    case 'right':
+    robot.y +=1,
+    robot.direction = 'down';
+    break;
+    case 'left':
+    robot.y -=1;
+    robot.direction = 'up';
+    break;
+    case 'up':
+    robot.x +=1,
+    robot.direction = 'right';
+    break;
+    case 'down':
+    robot.x -=1,
+    robot.direction = 'left';
+    break;
     }
-    else if (command === 'l') {
-    currentPosition.x--;
+    break;
+    case 'l':
+    switch(robot.direction) {
+    case 'right':
+    robot.y -=1,
+    robot.direction = 'up';
+    break;
+    case 'left':
+    robot.y +=1;
+    robot.direction = 'down';
+    break;
+    case 'up':
+    robot.x -=1,
+    robot.direction = 'left';
+    break;
+    case 'down':
+    robot.x +=1,
+    robot.direction = 'right';
+    break;
     }
-    else if (command === "def"){
-    currentPosition = {x: 0, y: 0};
+    break;
+    }
+    console.log("Координаты робота",robot)
+    if(robot.x < 0 || robot.x > 9 || robot.y < 0 || robot.y > 9) {
+    alert('Робот вышел за пределы поля!');
+    console.log('Робот вышел за пределы поля!')
     }
     else {
-    alert('Ошибка: неверный символ команды');
-    return;
+    const robotElement = document.getElementById('robot');
+    robotElement.style.left = robot.x * 50 + 'px';
+    robotElement.style.top = robot.y * 50 + 'px';
+    robotElement.style.transform = `rotate(${getRotation(robot.direction)}deg)`;
+    }
     }
     
-    if (currentPosition.x < 0 || currentPosition.x > 9 || currentPosition.y < 0 || currentPosition.y > 9) {
-    alert('Ошибка: робот вышел за пределы поля, введите команды правильно');
-    currentPosition = lastPosition;
+    function getRotation(direction) {
+    switch(direction) {
+    case 'right':
+    return 0;
+    case 'up':
+    return -90;
+    case 'left':
+    return -180;
+    case 'down':
+    return 90;
+    }
+    }
+
+    
+    function analyzeInput(input) {
+    const commands = input.split(',');
+    for(let i = 0; i < commands.length; i++) {
+    const command = commands[i].trim();
+    if(command !== 'f' && command !== 'r' && command !== 'l'&& command!=='.') {
+    alert(`Неверная команда "${command}"`);
+    console.log(`Неверная команда "${command}"`)
     return;
     }
-    robot.style.top = currentPosition.y * 50 + 'px';
-    robot.style.left = currentPosition.x * 50 + 'px';
-    for(let key in currentPosition){
-    lastPosition[key] = currentPosition[key];
+    moveRobot(command);
     }
-}
-}
+    }
+    function lexicalAnylazor(input) {
+        console.log("Входная строка",inputElement.value)
+        const commands = input.split("");
+        for(let i = 0; i < commands.length; i++) {
+        const command = commands[i].trim();
+        if(command !== 'f' && command !== 'r' && command !== 'l'&& command!=',' && command!='.') {
+        alert(`Ошибка в лексическом анализе "${command}"`);
+        console.log(`Ошибка в лексическом анализе "${command}"`)
+        return;
+        } 
+        if(commands[commands.length-1]!=="."){
+        alert('Ошибка, незаконченная последовательность комманд')
+        console.log('Ошибка, незаконченная последовательность комманд')
+        return;
+        }
+        }
+        buttonElement.addEventListener('click', function() {
+        analyzeInput(inputElement.value);
+        });
+    }
+    const inputElement = document.getElementById('input');
+    const buttonElement = document.getElementById('button');
+    buttonElement.addEventListener('click', function() {
+    lexicalAnylazor(inputElement.value);
+    });
+    /*if(lexicalAnylazor){
+    buttonElement.addEventListener('click', function() {
+    analyzeInput(inputElement.value);
+    });
+}*/
